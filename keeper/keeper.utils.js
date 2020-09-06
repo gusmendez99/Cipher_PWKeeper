@@ -1,5 +1,23 @@
 import { codec, bitArray } from "sjcl";
 
+//Bit array utilities
+export const compareBitArray = (array1, array2) =>
+	bitArray.equal(array1, array2);
+export const getBitArrayLength = (array) => bitArray.bitLength(array);
+export const concatBitArrays = (array1, array2) =>
+	bitArray.concat(array1, array2);
+
+export const getDictKeysCount = (dictionary) => {
+	let counter = 0;
+	for (const key in dictionary) {
+		if (dictionary.hasOwnProperty(key)) {
+			counter += 1;
+		}
+	}
+	return counter;
+};
+
+// Bit Array operations
 export const sliceBitArray = (bits, limitDown, limitUp) =>
 	bitArray.bitSlice(bits, limitDown, limitUp);
 export const bitArrayToString = (bits) => codec.utf8String.fromBits(bits);
@@ -46,7 +64,6 @@ export const extractWordFromBytes = (bytes, startIndex) => {
 	return word;
 };
 
-// Other utilities
 export const stringToPaddedByteArray = function (encodedString, paddingLength) {
 	if (typeof encodedString !== "string") throw "Encoded is not string...";
 	const string = unescape(encodeURIComponent(encodedString));
@@ -58,6 +75,8 @@ export const stringToPaddedByteArray = function (encodedString, paddingLength) {
 	}
 	return bytes;
 };
+
+// Padding if key length needs
 
 export const stringToPaddedBitArray = (encodedString, paddingLength) =>
 	codec.hex.toBits(
@@ -80,19 +99,3 @@ export const paddedByteArrayToString = (paddedBytes, paddingLength) =>
 		hexToByteArray(codec.hex.fromBits(paddedBytes)),
 		paddingLength
 	);
-
-// Another utilities
-export const getDictKeysCount = (dictionary) => {
-	let counter = 0;
-	for (const key in dictionary) {
-		if (dictionary.hasOwnProperty(key)) {
-			counter += 1;
-		}
-	}
-	return counter;
-};
-export const compareBitArray = (array1, array2) =>
-	bitArray.equal(array1, array2);
-export const getBitArrayLength = (array) => bitArray.bitLength(array);
-export const concatBitArrays = (array1, array2) =>
-	bitArray.concat(array1, array2);
