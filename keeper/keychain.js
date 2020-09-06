@@ -3,7 +3,6 @@ import {
 } from "./keeper.cipher";
 import {
 	AES_KEY_LENGTH_BITS,
-	EXTRA_PADDING_BYTES,
 	KEYCHAIN_STATE_OFF,
 	KEYCHAIN_STATE_ON,
 	MAC_KEY_LENGTH_BITS,
@@ -26,7 +25,7 @@ class Keychain {
 		}
 		this.data = {}
 	}
-	
+
 	init(password) {
 		this.state = KEYCHAIN_STATE_OFF
 		this.keys = {}
@@ -70,7 +69,7 @@ class Keychain {
 
 		const cipher = cipherState(authKey);
 		let decryptedText = ""
-		
+
 		try {
 			decryptedText = decryptGCM(cipher, authMessage);
 		} catch (err) {
@@ -92,7 +91,7 @@ class Keychain {
 			MAC_KEY_LENGTH_BITS
 		);
 		const gcmKey = keeperUtils.sliceBitArray(
-			HMAC(master_key, "secret gcm pk"),
+			HMAC(master, "secret gcm pk"),
 			0,
 			AES_KEY_LENGTH_BITS
 		);
@@ -101,44 +100,77 @@ class Keychain {
 
 		const loadedData = JSON.parse(representation);
 		this.data = omit(loadedData, ['salt', 'authMessage'])
-		this.state = KEYCHAIN_STATE_ON		
+		this.state = KEYCHAIN_STATE_ON
 
 		return true;
 	};
 
 	get(name) {
-		if (this.state == KEYCHAIN_STATE_ON) {
-			const { authKey, gcmKey } = this.keys
-			const hmacDomain = HMAC(authKey, name);
-			if (!(hmacDomain in this.data)) return null;
+		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
 
-			const encrypted = this.data[hmacDomain];
-			const decryptedBits = decryptGCM(cipherState(gcmKey), encrypted);
-			const paddedPassword = keeperUtils.sliceBitArray(
+		const { authKey, gcmKey } = this.keys
+		const hmacDomain = HMAC(authKey, name);
+		if (!(hmacDomain in this.data)) return null;
+
+		const encrypted = this.data[hmacDomain];
+		const decryptedBits = decryptGCM(cipherState(gcmKey), encrypted);
+		const paddedPassword = keeperUtils.sliceBitArray(
+			decryptedBits,
+			0,
+			TOTAL_PASSWORD_LENGTH * 8
+		);
+
+		const decryptedPassword = keeperUtils.paddedBitArrayToString(
+			paddedPassword,
+			MAX_PASSWORD_LENGTH_BYTES + 1
+		);
+
+		const isSwapped = !keeperUtils.compareBitArray(
+			hmacDomain,
+			keeperUtils.sliceBitArray(
 				decryptedBits,
-				0,
-				TOTAL_PASSWORD_LENGTH * 8
-			);
-
-			const decryptedPassword = keeperUtils.paddedBitArrayToString(
-				paddedPassword,
-				MAX_PASSWORD_LENGTH_BYTES + 1
-			);
-
-			const isSwapped = !keeperUtils.compareBitArray(
-				hmacDomain,
-				keeperUtils.sliceBitArray(
-					decryptedBits,
-					TOTAL_PASSWORD_LENGTH * 8,
-					keeperUtils.getBitArrayLength(decryptedBits)
-				)
+				TOTAL_PASSWORD_LENGTH * 8,
+				keeperUtils.getBitArrayLength(decryptedBits)
 			)
+		)
 
-			if (isSwapped) throw "SWAPPING ATTACK DETECTED!!! LOOK OUT!!! TOUBLE AHEAD!!!";
-			return decryptedPassword;
-		} else {
-			throw "Keychain state must be initialized...";
-		}
+		if (isSwapped) throw "Swapping attack...";
+		return decryptedPassword;
 	};
-	
+
+	set(name, value) {
+		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
+
+		const { hmacKey, gcmKey } = this.keys;
+		const hmacDomain = HMAC(hmacKey, name);
+		const paddedBits = keeperUtils.paddedBitArrayToString(value, MAX_PASSWORD_LENGTH_BYTES + 1);
+
+		const textToEncrypt = keeperUtils.concatBitArrays(paddedBits, hmacDomain);
+		const encryptedValue = encryptGCM(cipherState(gcmKey), textToEncrypt);
+		this.data[hmacDomain] = encryptedValue;
+	}
+
+	remove(name) {
+		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
+		const { hmacKey } = this.keys;
+		const hmacDomain = HMAC(hmacKey, name);
+
+		if (hmacDomain in this.data) {
+			this.data = omit(this.data, [hmacDomain]);
+			return true;
+		}
+		return false;
+	}
+
+	dump() {
+		if (this.state == KEYCHAIN_STATE_OFF) return null;
+
+		const { authKey } = this.keys;
+		const encryptedMessage = encryptGCM(cipherState(authKey), keeperUtils.stringToBitArray("authenticate"));
+		const currentData = { ...JSON.parse(JSON.stringify(this.data)), salt: this.keys.salt, authMessage: encryptedMessage };
+
+		const hash = SHA256(keeperUtils.stringToBitArray(JSON.stringify(currentData)));
+		return [JSON.stringify(currentData), hash];
+	}
+
 };
