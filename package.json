@@ -4,7 +4,7 @@
   "description": "Password Keeper - Cipher Project 1",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,14 @@
   },
   "homepage": "https://github.com/gusmendez99/Cipher_PWKeeper#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "http-errors": "^1.8.0",
+    "jade": "^1.11.0",
     "lodash": "^4.17.20",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.4",
     "sjcl": "^1.0.8"
   }
 }

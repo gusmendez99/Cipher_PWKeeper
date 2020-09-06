@@ -1,13 +1,13 @@
-import { codec, bitArray } from "sjcl";
+const { codec, bitArray } = require("sjcl");
 
 //Bit array utilities
-export const compareBitArray = (array1, array2) =>
+const compareBitArray = (array1, array2) =>
 	bitArray.equal(array1, array2);
-export const getBitArrayLength = (array) => bitArray.bitLength(array);
-export const concatBitArrays = (array1, array2) =>
+const getBitArrayLength = (array) => bitArray.bitLength(array);
+const concatBitArrays = (array1, array2) =>
 	bitArray.concat(array1, array2);
 
-export const getDictKeysCount = (dictionary) => {
+const getDictKeysCount = (dictionary) => {
 	let counter = 0;
 	for (const key in dictionary) {
 		if (dictionary.hasOwnProperty(key)) {
@@ -18,16 +18,16 @@ export const getDictKeysCount = (dictionary) => {
 };
 
 // Bit Array operations
-export const sliceBitArray = (bits, limitDown, limitUp) =>
+const sliceBitArray = (bits, limitDown, limitUp) =>
 	bitArray.bitSlice(bits, limitDown, limitUp);
-export const bitArrayToString = (bits) => codec.utf8String.fromBits(bits);
-export const stringToBitArray = (string) => codec.utf8String.toBits(string);
-export const bitArrayToHex = (bits) => codec.hex.fromBits(bits);
-export const hexToBitArray = (hex) => codec.hex.toBits(hex);
-export const bitArrayToBase64 = (bits) => codec.base64.fromBits(bits);
-export const base64ToBitArray = (base64) => codec.base64.toBits(base64);
+const bitArrayToString = (bits) => codec.utf8String.fromBits(bits);
+const stringToBitArray = (string) => codec.utf8String.toBits(string);
+const bitArrayToHex = (bits) => codec.hex.fromBits(bits);
+const hexToBitArray = (hex) => codec.hex.toBits(hex);
+const bitArrayToBase64 = (bits) => codec.base64.fromBits(bits);
+const base64ToBitArray = (base64) => codec.base64.toBits(base64);
 
-export const byteArrayToHex = (bytes) => {
+const byteArrayToHex = (bytes) => {
 	let hex = "";
 	for (let i = 0; i < bytes.length; i++) {
 		if (bytes[i] < 0 || bytes[i] >= 256)
@@ -36,7 +36,7 @@ export const byteArrayToHex = (bytes) => {
 	}
 	return hex;
 };
-export const hexToByteArray = (hex) => {
+const hexToByteArray = (hex) => {
 	const bytes = [];
 	if (hex.length % 2 != 0) throw "Hex has not odd length...";
 	for (let i = 0; i < s.length; i += 2) {
@@ -45,7 +45,7 @@ export const hexToByteArray = (hex) => {
 	return bytes;
 };
 
-export const wordToBytesChecker = (word, bytes) => {
+const wordToBytesChecker = (word, bytes) => {
 	if (word < 0) throw "Word is negative integer...";
 	for (var i = 0; i < 4; i++) {
 		bytes.push(word & 0xff);
@@ -53,7 +53,7 @@ export const wordToBytesChecker = (word, bytes) => {
 	}
 };
 
-export const extractWordFromBytes = (bytes, startIndex) => {
+const extractWordFromBytes = (bytes, startIndex) => {
 	if (!Array.isArray(bytes)) throw "Bytes value is not an array...";
 	if (bytes.length < 4) throw "Bytes array has a wrong length...";
 	let word = 0;
@@ -64,7 +64,7 @@ export const extractWordFromBytes = (bytes, startIndex) => {
 	return word;
 };
 
-export const stringToPaddedByteArray = function (encodedString, paddingLength) {
+const stringToPaddedByteArray = function (encodedString, paddingLength) {
 	if (typeof encodedString !== "string") throw "Encoded is not string...";
 	const string = unescape(encodeURIComponent(encodedString));
 	if (string.length > paddingLength) throw "String value is too long...";
@@ -78,12 +78,12 @@ export const stringToPaddedByteArray = function (encodedString, paddingLength) {
 
 // Padding if key length needs
 
-export const stringToPaddedBitArray = (encodedString, paddingLength) =>
+const stringToPaddedBitArray = (encodedString, paddingLength) =>
 	codec.hex.toBits(
 		byteArrayToHex(stringToPaddedByteArray(encodedString, paddingLength))
 	);
 
-export const paddedBitArrayToString = (paddedBits, paddingLength) => {
+const paddedBitArrayToString = (paddedBits, paddingLength) => {
 	if (paddedBits.length != paddingLength + 4)
 		throw "Padded bytes array has wrong length...";
 	const extracted = extractWordFromBytes(paddedBits, 0);
@@ -94,8 +94,30 @@ export const paddedBitArrayToString = (paddedBits, paddingLength) => {
 	return decodeURIComponent(escape(string));
 };
 
-export const paddedByteArrayToString = (paddedBytes, paddingLength) =>
+const paddedByteArrayToString = (paddedBytes, paddingLength) =>
 	paddedBitArrayToString(
 		hexToByteArray(codec.hex.fromBits(paddedBytes)),
 		paddingLength
 	);
+
+module.exports = {
+	compareBitArray,
+	getBitArrayLength,
+	concatBitArrays,
+	getDictKeysCount,
+	sliceBitArray,
+	bitArrayToString,
+	stringToBitArray,
+	bitArrayToHex,
+	hexToBitArray,
+	bitArrayToBase64,
+	base64ToBitArray,
+	byteArrayToHex,
+	hexToByteArray,
+	wordToBytesChecker,
+	extractWordFromBytes,
+	stringToPaddedByteArray,
+	stringToPaddedBitArray,
+	paddedBitArrayToString,
+	paddedByteArrayToString
+}

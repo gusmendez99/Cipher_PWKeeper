@@ -1,27 +1,27 @@
-import {
+const {
 	HMAC, PBKDF2, SHA256, cipherState, decryptGCM, encryptGCM, generateRandomArray
-} from "./keeper.cipher";
-import {
+} =require ("./keeper.cipher");
+const {
 	AES_KEY_LENGTH_BITS,
 	KEYCHAIN_STATE_OFF,
 	KEYCHAIN_STATE_ON,
 	MAC_KEY_LENGTH_BITS,
 	MAX_PASSWORD_LENGTH_BYTES,
 	TOTAL_PASSWORD_LENGTH
-} from './keeper.constants';
+} = require('./keeper.constants');
 
-import * as keeperUtils from './keeper.utils'
-import omit from 'lodash/omit';
+const keeperUtils = require('./keeper.utils')
+const omit = require( 'lodash/omit');
 
 class Keychain {
 	// Instance variables
 	constructor() {
-		this.state = KEY
+		this.state = KEYCHAIN_STATE_OFF
 		this.keys = {
-			salt = null,
-			authKey = null,
-			hmacKey = null,
-			gcmKey = null
+			salt : null,
+			authKey : null,
+			hmacKey : null,
+			gcmKey : null
 		}
 		this.data = {}
 	}
@@ -174,3 +174,7 @@ class Keychain {
 	}
 
 };
+
+module.exports = {
+	keychain: Keychain
+}
