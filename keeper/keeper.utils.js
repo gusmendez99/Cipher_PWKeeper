@@ -39,7 +39,7 @@ const byteArrayToHex = (bytes) => {
 const hexToByteArray = (hex) => {
 	const bytes = [];
 	if (hex.length % 2 != 0) throw "Hex has not odd length...";
-	for (let i = 0; i < s.length; i += 2) {
+	for (let i = 0; i < hex.length; i += 2) {
 		bytes.push(parseInt(hex.substr(i, 2), 16) | 0);
 	}
 	return bytes;
@@ -70,7 +70,7 @@ const stringToPaddedByteArray = function (encodedString, paddingLength) {
 	if (string.length > paddingLength) throw "String value is too long...";
 	const bytes = [];
 	wordToBytesChecker(string.length, bytes);
-	for (const i = 0; i < paddingLength; i++) {
+	for (let i = 0; i < paddingLength; i++) {
 		i < string.length ? bytes.push(string.charCodeAt(i)) : bytes.push(0);
 	}
 	return bytes;
@@ -83,19 +83,19 @@ const stringToPaddedBitArray = (encodedString, paddingLength) =>
 		byteArrayToHex(stringToPaddedByteArray(encodedString, paddingLength))
 	);
 
-const paddedBitArrayToString = (paddedBits, paddingLength) => {
+const paddedByteArrayToString = (paddedBits, paddingLength) => {
 	if (paddedBits.length != paddingLength + 4)
 		throw "Padded bytes array has wrong length...";
 	const extracted = extractWordFromBytes(paddedBits, 0);
 	let string = "";
-	for (const i = 4; i < Math.min(4 + extracted, paddedBits.length); i++) {
+	for (let i = 4; i < Math.min(4 + extracted, paddedBits.length); i++) {
 		string += String.fromCharCode(paddedBits[i]);
 	}
 	return decodeURIComponent(escape(string));
 };
 
-const paddedByteArrayToString = (paddedBytes, paddingLength) =>
-	paddedBitArrayToString(
+const paddedBitArrayToString = (paddedBytes, paddingLength) =>
+	paddedByteArrayToString(
 		hexToByteArray(codec.hex.fromBits(paddedBytes)),
 		paddingLength
 	);

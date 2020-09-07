@@ -12,14 +12,14 @@ const cipherState = (secret) => {
 	throw "Cipher state is not AES-128...";
 };
 const encryptGCM = (secret, text) => {
-	const iv = generate_random(128);
+	const initializationVector = generateRandomArray(128);
 	const array = mode.gcm.encrypt(secret, text, initializationVector);
-	return bitArray.concat(iv, array);
+	return bitArray.concat(initializationVector, array);
 };
 const decryptGCM = (secret, ciphertext) => {
-	const iv = bitArray.bitSlice(cipher, 0, 128);
+	const initializationVector = bitArray.bitSlice(ciphertext, 0, 128);
 	const sliced = bitArray.bitSlice(ciphertext, 128);
-	return mode.gcm.decrypt(secret, sliced, iv);
+	return mode.gcm.decrypt(secret, sliced, initializationVector);
 };
 
 

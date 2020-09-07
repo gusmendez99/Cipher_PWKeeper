@@ -61,7 +61,7 @@ class Keychain {
 		const { salt, authMessage } = data;
 		const master = PBKDF2(password, salt);
 
-		const authKey = sliceBitArray(
+		const authKey = keeperUtils.sliceBitArray(
 			HMAC(master, "secret auth pk"),
 			0,
 			AES_KEY_LENGTH_BITS
@@ -108,11 +108,12 @@ class Keychain {
 	get(name) {
 		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
 
-		const { authKey, gcmKey } = this.keys
-		const hmacDomain = HMAC(authKey, name);
+		const { hmacKey, gcmKey } = this.keys
+		const hmacDomain = HMAC(hmacKey, name);
 		if (!(hmacDomain in this.data)) return null;
 
 		const encrypted = this.data[hmacDomain];
+		console.log("Encrypted is ", encrypted)
 		const decryptedBits = decryptGCM(cipherState(gcmKey), encrypted);
 		const paddedPassword = keeperUtils.sliceBitArray(
 			decryptedBits,
@@ -142,7 +143,7 @@ class Keychain {
 		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
 		const { hmacKey, gcmKey } = this.keys;
 		const hmacDomain = HMAC(hmacKey, name);
-		const paddedBits = keeperUtils.paddedBitArrayToString(value, MAX_PASSWORD_LENGTH_BYTES + 1);
+		const paddedBits = keeperUtils.stringToPaddedBitArray(value, MAX_PASSWORD_LENGTH_BYTES + 1);
 
 		const textToEncrypt = keeperUtils.concatBitArrays(paddedBits, hmacDomain);
 		const encryptedValue = encryptGCM(cipherState(gcmKey), textToEncrypt);
