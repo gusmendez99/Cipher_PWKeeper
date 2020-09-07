@@ -41,7 +41,8 @@ app.use(function(req, res, next) {
 app.use("/", indexRouter);
 
 // keychain
-app.get("/keychain/init", keychainRouter.postInit);
+app.post("/keychain/init", keychainRouter.postInit);
+app.post("/keychain/set", keychainRouter.postSet);
 
 app.use(function(req, res, next) {
   next(createError(404))

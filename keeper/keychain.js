@@ -140,7 +140,6 @@ class Keychain {
 
 	set(name, value) {
 		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
-
 		const { hmacKey, gcmKey } = this.keys;
 		const hmacDomain = HMAC(hmacKey, name);
 		const paddedBits = keeperUtils.paddedBitArrayToString(value, MAX_PASSWORD_LENGTH_BYTES + 1);
