@@ -8,6 +8,7 @@ const cors = require("cors");
 // Routers
 var indexRouter = require("./routes/index");
 var keychainRouter = require("./routes/keychain");
+const keychain = require("./keeper/keychain");
 
 // express app
 var app = express();
@@ -41,8 +42,10 @@ app.use(function(req, res, next) {
 app.use("/", indexRouter);
 
 // keychain
-app.post("/keychain/init", keychainRouter.postInit);
-app.post("/keychain/set", keychainRouter.postSet);
+app.post("/keychain/init", keychainRouter.init);
+app.post("/keychain/set", keychainRouter.set);
+app.get("/keychain/get", keychainRouter.getByName);
+app.delete("/keychain/remove/:name", keychainRouter.remove)
 
 app.use(function(req, res, next) {
   next(createError(404))

@@ -110,7 +110,10 @@ class Keychain {
 
 		const { hmacKey, gcmKey } = this.keys
 		const hmacDomain = HMAC(hmacKey, name);
-		if (!(hmacDomain in this.data)) return null;
+
+		console.log(hmacDomain)
+
+		//if (!(hmacDomain in this.data)) return null;
 
 		const encrypted = this.data[hmacDomain];
 		console.log("Encrypted is ", encrypted)
@@ -156,7 +159,8 @@ class Keychain {
 		const hmacDomain = HMAC(hmacKey, name);
 
 		if (hmacDomain in this.data) {
-			this.data = omit(this.data, [hmacDomain]);
+			const hmacDomainString = hmacDomain.map(x => x.toString()).join();
+			this.data = omit(this.data, [hmacDomainString]);
 			return true;
 		}
 		return false;
