@@ -57,7 +57,8 @@ class Keychain {
 	load(password, representation, trustedDataCheck) {
 		this.state = KEYCHAIN_STATE_OFF
 
-		const data = JSON.parse(representation);
+		// const data = representation;
+		const data = representation;
 		const { salt, authMessage } = data;
 		const master = PBKDF2(password, salt);
 
@@ -69,12 +70,14 @@ class Keychain {
 
 		const cipher = cipherState(authKey);
 		let decryptedText = ""
-
+		console.log(cipher)
 		try {
 			decryptedText = decryptGCM(cipher, authMessage);
 		} catch (err) {
+			console.log(err)
 			return false;
 		}
+		console.log('decrypted', decryptedText)
 
 		const isValidMessage = keeperUtils.compareBitArray(decryptedText, keeperUtils.stringToBitArray("authenticate"))
 		if (!isValidMessage) return false;
@@ -174,7 +177,8 @@ class Keychain {
 		const currentData = { ...JSON.parse(JSON.stringify(this.data)), salt: this.keys.salt, authMessage: encryptedMessage };
 
 		const hash = SHA256(keeperUtils.stringToBitArray(JSON.stringify(currentData)));
-		return [JSON.stringify(currentData), hash];
+
+		return [currentData, hash];
 	}
 
 };
