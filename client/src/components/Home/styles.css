@@ -13,3 +13,14 @@
     padding-bottom: 4rem;
 
 }
+
+.table {
+    display: flex;
+    flex-direction: column;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}

@@ -14,8 +14,16 @@ const Row = ({ domain }) => {
     return (
         <Fragment>
             <td>{domain}</td>
-            <td><input type={isVisible ? "text" : "password"} disabled={true} value={pass} ></input></td>
-            <td><button onClick={handleView}>View</button></td>
+            {
+                !isLoading 
+                ? 
+                <div>
+                    <td><input type={isVisible ? "text" : "password"} disabled={true} value={pass} ></input></td>
+                    <td><button onClick={handleView}>View</button></td>
+                </div> 
+                :
+                <td>Loading ... </td>
+            }
         </Fragment>
     );
 
