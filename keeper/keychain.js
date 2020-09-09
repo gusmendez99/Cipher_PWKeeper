@@ -57,7 +57,8 @@ class Keychain {
 	load(password, representation, trustedDataCheck) {
 		this.state = KEYCHAIN_STATE_OFF
 
-		const data = JSON.parse(representation);
+		// const data = representation;
+		const data = representation;
 		const { salt, authMessage } = data;
 		const master = PBKDF2(password, salt);
 
@@ -69,12 +70,14 @@ class Keychain {
 
 		const cipher = cipherState(authKey);
 		let decryptedText = ""
-
+		console.log(cipher)
 		try {
 			decryptedText = decryptGCM(cipher, authMessage);
 		} catch (err) {
+			console.log(err)
 			return false;
 		}
+		console.log('decrypted', decryptedText)
 
 		const isValidMessage = keeperUtils.compareBitArray(decryptedText, keeperUtils.stringToBitArray("authenticate"))
 		if (!isValidMessage) return false;
@@ -110,7 +113,10 @@ class Keychain {
 
 		const { hmacKey, gcmKey } = this.keys
 		const hmacDomain = HMAC(hmacKey, name);
-		if (!(hmacDomain in this.data)) return null;
+
+		console.log(hmacDomain)
+
+		//if (!(hmacDomain in this.data)) return null;
 
 		const encrypted = this.data[hmacDomain];
 		console.log("Encrypted is ", encrypted)
@@ -156,7 +162,8 @@ class Keychain {
 		const hmacDomain = HMAC(hmacKey, name);
 
 		if (hmacDomain in this.data) {
-			this.data = omit(this.data, [hmacDomain]);
+			const hmacDomainString = hmacDomain.map(x => x.toString()).join();
+			this.data = omit(this.data, [hmacDomainString]);
 			return true;
 		}
 		return false;
@@ -170,7 +177,8 @@ class Keychain {
 		const currentData = { ...JSON.parse(JSON.stringify(this.data)), salt: this.keys.salt, authMessage: encryptedMessage };
 
 		const hash = SHA256(keeperUtils.stringToBitArray(JSON.stringify(currentData)));
-		return [JSON.stringify(currentData), hash];
+
+		return [currentData, hash];
 	}
 
 };
