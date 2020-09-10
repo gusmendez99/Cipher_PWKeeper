@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect} from 'react';
+import axios from 'axios';
 
 import Row from '../Row';
 import AceEditor from 'react-ace';
@@ -7,6 +8,7 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 import './styles.css';
 import { identity } from 'lodash';
+import { response } from 'express';
 
 const Home = ({ domains }) => {
 
@@ -23,7 +25,12 @@ const Home = ({ domains }) => {
 
     const handleAddDomain = () => {
         if(domain && pass) {
-            alert(pass);
+        //     axios
+        //         .get("http://localhost:3000/keychain/set")
+        //         .then(response => {
+        //             console.log("response,", response.data);
+        //         });
+        alert(pass);
         }
         else {
             alert("Fill all fields please!");
