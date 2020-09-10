@@ -1,17 +1,14 @@
 var keychainModule = require("../keeper/keychain");
 const { request, response } = require("express");
 
-const keyChainClass = keychainModule.keychain;
-
-const keychain = new keyChainClass();
+const keychain = new keychainModule.KeyChain();
 
 const init = (request, response) => {
   const password = request.body;
 
   keychain.init(password);
 
-  if (keychain.keys.salt === null && keychain.keys.authKey === null 
-    && keychain.keys.hmacKey === null && keychain.keys.gcmKey === null){
+  if (keychain.keys === null){
     response.status(400).json("{ error: Keychain failed to be initialized}")
   } else {
     response.status(200).json("{ message: keychain initialized successfully }");
@@ -29,7 +26,7 @@ const set = (request, response) => {
 };
 
 const getByName = (request, response) => {
-  const name = request.body;
+  const { name }  = request.body;
   console.log(name)
   const decrypted = keychain.get(name);
   console.log(decrypted)
@@ -58,11 +55,12 @@ const dump = (request, response) => {
 
 const load = (request, response) => {
   const { password, representation, trustedDataCheck } = request.body;
-  const newKeychain = new keyChainClass();
-  // console.log(password)
-  // console.log(representation)
-  // console.log(trustedDataCheck)
+  const newKeychain = new keychainModule.KeyChain();
+  console.log(password)
+  console.log(representation)
+  console.log(trustedDataCheck)
   const loadDone = newKeychain.load(password, representation, trustedDataCheck);
+  console.log(loadDone)
   if (!loadDone){
     response.status(400).json('message: Load failed'); // ver que ondas con este error
   } else {
