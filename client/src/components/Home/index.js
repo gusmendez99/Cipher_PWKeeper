@@ -7,8 +7,7 @@ import AceEditor from 'react-ace';
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 import './styles.css';
-import { identity } from 'lodash';
-import { response } from 'express';
+
 
 const Home = ({ domains }) => {
 
@@ -25,11 +24,11 @@ const Home = ({ domains }) => {
 
     const handleAddDomain = () => {
         if(domain && pass) {
-        //     axios
-        //         .get("http://localhost:3000/keychain/set")
-        //         .then(response => {
-        //             console.log("response,", response.data);
-        //         });
+            axios
+                .get("http://localhost:3000/keychain/set")
+                .then(response => {
+                    console.log("response,", response.data);
+                });
         alert(pass);
         }
         else {
