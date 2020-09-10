@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect} from 'react';
 
 import Row from '../Row';
 import AceEditor from 'react-ace';
@@ -6,12 +6,20 @@ import AceEditor from 'react-ace';
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 import './styles.css';
+import { identity } from 'lodash';
 
-const Home = () => {
+const Home = ({ domains }) => {
 
+    
     const [textEditor, changeTextEditor] = useState(''); //for text editor component
     const [domain, changeDomain] = useState(''); //for form component
     const [pass, changePass] = useState(''); //for form component
+    const [myDomains, changeDomains] = useState(domains);
+    
+    useEffect(() => {
+        changeDomains(domains)
+    },
+    [domains]);
 
     const handleAddDomain = () => {
         if(domain && pass) {
@@ -32,6 +40,11 @@ const Home = () => {
         }
     }
 
+    const deleteRow = (id) => {
+        const newState = myDomains.filter((e,i) => i != id);
+        changeDomains(newState);
+    }
+
     return (
         <Fragment>
             <div className="header">
@@ -49,16 +62,11 @@ const Home = () => {
                         </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <Row domain="www.gmail.com"/>
-                        {/* TODO: DELETE FROM LOCAL STATE ROW */}
-                        <td><button>Delete</button></td>
-                    </tr>
-                    <tr>
-                        <Row domain="www.youtube.com"/>
-                        {/* TODO: DELETE FROM LOCAL STATE ROW */}
-                        <td><button>Delete</button></td>
-                    </tr>
+                        {
+                            myDomains.map((d,i) => (
+                                <Row key={i} id={i} domain={d} deleteRow={deleteRow}/>
+                            )) 
+                        }
                     </tbody>
                 </table>
                 </div>

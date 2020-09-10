@@ -1,7 +1,7 @@
-import React, { Fragment, useState } from 'react';
+import React, {  useState } from 'react';
 
 
-const Row = ({ domain }) => {
+const Row = ({ domain, id, deleteRow }) => {
 
     const [pass, changePass] = useState('password');
     const [isVisible, changeIsVisible] = useState(false);
@@ -12,19 +12,20 @@ const Row = ({ domain }) => {
     }
 
     return (
-        <Fragment>
+        <tr>
             <td>{domain}</td>
             {
                 !isLoading 
                 ? 
-                <div>
+                <>
                     <td><input type={isVisible ? "text" : "password"} disabled={true} value={pass} ></input></td>
                     <td><button onClick={handleView}>View</button></td>
-                </div> 
+                    <td><button onClick={() => deleteRow(id)}>Delete</button></td>
+                </> 
                 :
                 <td>Loading ... </td>
             }
-        </Fragment>
+        </tr>
     );
 
 }
