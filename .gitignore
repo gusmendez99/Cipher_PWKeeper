@@ -1,5 +1,4 @@
 # Logs
-bin/
 tests/
 logs
 *.log

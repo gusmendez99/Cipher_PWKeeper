@@ -54,14 +54,17 @@ class KeyChain {
 	};
 
 	load (password, representation, trustedDataCheck) {
+		console.log('Here i am')
 		if (!(trustedDataCheck == undefined)) {
 			var checkSHA = SHA256(representation);
+			console.log(checkSHA, trustedDataCheck)
 			if (!compareBitArrays(checkSHA, trustedDataCheck)) {
 				throw "Representation and SHA256 hash have different values...";
 			}
 		}
 
 		var parsedData = JSON.parse(representation);
+		console.log('parsed', parsedData)
 		var masterKey = PBKDF2(password, parsedData.salt);
 		var hmacKey = HMAC(masterKey, "MAC KEY STRING");
 		var hmacPassword = HMAC(hmacKey, "AUTH KEY SECRET");
