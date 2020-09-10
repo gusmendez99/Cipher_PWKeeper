@@ -1,188 +1,131 @@
 const {
-	HMAC, PBKDF2, SHA256, cipherState, decryptGCM, encryptGCM, generateRandomArray
-} =require ("./keeper.cipher");
+	HMAC,
+	PBKDF2,
+	SHA256,
+	compareBitArrays,
+	decryptWithGCM,
+	encryptwithGCM,
+	paddedBitArrayToString,
+	randomBitArray,
+	setupCipher,
+	stringToPaddedBitArray,
+	bitArrayToHex,
+	hexToBitArray,
+} = require("./utils");
+
 const {
-	AES_KEY_LENGTH_BITS,
 	KEYCHAIN_STATE_OFF,
 	KEYCHAIN_STATE_ON,
-	MAC_KEY_LENGTH_BITS,
 	MAX_PASSWORD_LENGTH_BYTES,
-	TOTAL_PASSWORD_LENGTH
-} = require('./keeper.constants');
+} = require("./constants");
 
-const keeperUtils = require('./keeper.utils')
-const omit = require( 'lodash/omit');
+const omit = require("lodash/omit");
 
-class Keychain {
-	// Instance variables
+class KeyChain {
 	constructor() {
 		this.state = KEYCHAIN_STATE_OFF
-		this.keys = {
-			salt : null,
-			authKey : null,
-			hmacKey : null,
-			gcmKey : null
-		}
+		this.keys = {}
 		this.data = {}
 	}
-
-	init(password) {
-		this.state = KEYCHAIN_STATE_OFF
-		this.keys = {}
-		this.data = {};
-
-		const salt = generateRandomArray(AES_KEY_LENGTH_BITS);
-		const master = PBKDF2(password, salt);
-
-		const authKey = keeperUtils.sliceBitArray(
-			HMAC(master, "secret auth pk"),
-			0,
-			AES_KEY_LENGTH_BITS
+	
+	init (password) {
+		this.data.version = "v2";
+		this.data.salt = randomBitArray(128);
+		this.keys.masterKey = PBKDF2(
+			password,
+			this.data.salt
 		);
-		const hmacKey = keeperUtils.sliceBitArray(
-			HMAC(master, "secret hmac pk"),
-			0,
-			MAC_KEY_LENGTH_BITS
+		this.keys.hmacKey = HMAC(
+			this.keys.masterKey,
+			"MAC KEY STRING"
 		);
-		const gcmKey = keeperUtils.sliceBitArray(
-			HMAC(master, "secret gcm pk"),
-			0,
-			AES_KEY_LENGTH_BITS
+		this.keys.aesKey = HMAC(
+			this.keys.masterKey,
+			"AES KEY SECRET"
+		).slice(0, 4);
+		this.data.authKey = HMAC(
+			this.keys.hmacKey,
+			"AUTH KEY SECRET"
 		);
+		this.keys.cipher = setupCipher(this.keys.aesKey);
+		this.data.credentials = {};
 
-		this.keys = { salt, authKey, hmacKey, gcmKey }
-		this.state = KEYCHAIN_STATE_ON
+		this.state = KEYCHAIN_STATE_ON;
 	};
 
-	load(password, representation, trustedDataCheck) {
-		this.state = KEYCHAIN_STATE_OFF
+	load (password, representation, trustedDataCheck) {
+		if (!(trustedDataCheck == undefined)) {
+			var checkSHA = SHA256(representation);
+			if (!compareBitArrays(checkSHA, trustedDataCheck)) {
+				throw "Representation and SHA256 hash have different values...";
+			}
+		}
 
-		// const data = representation;
-		const data = representation;
-		const { salt, authMessage } = data;
-		const master = PBKDF2(password, salt);
-
-		const authKey = keeperUtils.sliceBitArray(
-			HMAC(master, "secret auth pk"),
-			0,
-			AES_KEY_LENGTH_BITS
-		);
-
-		const cipher = cipherState(authKey);
-		let decryptedText = ""
-		console.log(cipher)
-		try {
-			decryptedText = decryptGCM(cipher, authMessage);
-		} catch (err) {
-			console.log(err)
+		var parsedData = JSON.parse(representation);
+		var masterKey = PBKDF2(password, parsedData.salt);
+		var hmacKey = HMAC(masterKey, "MAC KEY STRING");
+		var hmacPassword = HMAC(hmacKey, "AUTH KEY SECRET");
+		if (!compareBitArrays(hmacPassword, parsedData.authKey)) {
 			return false;
 		}
-		console.log('decrypted', decryptedText)
 
-		const isValidMessage = keeperUtils.compareBitArray(decryptedText, keeperUtils.stringToBitArray("authenticate"))
-		if (!isValidMessage) return false;
-
-		if (trustedDataCheck) {
-			const hash = SHA256(keeperUtils.stringToBitArray(representation));
-			const isValidHash = keeperUtils.compareBitArray(hash, trustedDataCheck)
-			if (!isValidHash) throw "Representation and SHA256 hash have different values...";
-		}
-
-		const hmacKey = keeperUtils.sliceBitArray(
-			HMAC(master, "secret hmac pk"),
+		this.data = parsedData;
+		this.keys.masterKey = masterKey;
+		this.keys.hmacKey = hmacKey;
+		this.keys.aesKey = HMAC(masterKey, "AES KEY SECRET").slice(
 			0,
-			MAC_KEY_LENGTH_BITS
+			4
 		);
-		const gcmKey = keeperUtils.sliceBitArray(
-			HMAC(master, "secret gcm pk"),
-			0,
-			AES_KEY_LENGTH_BITS
-		);
+		this.keys.cipher = setupCipher(this.keys.aesKey);
 
-		this.keys = { salt, gcmKey, hmacKey, authKey }
-
-		const loadedData = JSON.parse(representation);
-		this.data = omit(loadedData, ['salt', 'authMessage'])
-		this.state = KEYCHAIN_STATE_ON
-
+		this.state = KEYCHAIN_STATE_ON;
 		return true;
 	};
 
-	get(name) {
-		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
-
-		const { hmacKey, gcmKey } = this.keys
-		const hmacDomain = HMAC(hmacKey, name);
-
-		console.log(hmacDomain)
-
-		//if (!(hmacDomain in this.data)) return null;
-
-		const encrypted = this.data[hmacDomain];
-		console.log("Encrypted is ", encrypted)
-		const decryptedBits = decryptGCM(cipherState(gcmKey), encrypted);
-		const paddedPassword = keeperUtils.sliceBitArray(
-			decryptedBits,
-			0,
-			TOTAL_PASSWORD_LENGTH * 8
-		);
-
-		const decryptedPassword = keeperUtils.paddedBitArrayToString(
-			paddedPassword,
-			MAX_PASSWORD_LENGTH_BYTES + 1
-		);
-
-		const isSwapped = !keeperUtils.compareBitArray(
-			hmacDomain,
-			keeperUtils.sliceBitArray(
-				decryptedBits,
-				TOTAL_PASSWORD_LENGTH * 8,
-				keeperUtils.getBitArrayLength(decryptedBits)
-			)
-		)
-
-		if (isSwapped) throw "Swapping attack...";
-		return decryptedPassword;
+	dump () {
+		if (this.state === KEYCHAIN_STATE_OFF) return null;
+		var representation = JSON.stringify(this.data);
+		return [representation, SHA256(representation)];
 	};
 
-	set(name, value) {
-		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
-		const { hmacKey, gcmKey } = this.keys;
-		const hmacDomain = HMAC(hmacKey, name);
-		const paddedBits = keeperUtils.stringToPaddedBitArray(value, MAX_PASSWORD_LENGTH_BYTES + 1);
+	get (name) {
+		if (this.state === KEYCHAIN_STATE_OFF) throw "Keychain not initialized.";
+		var hmacDomain = HMAC(this.keys.hmacKey, name);
+		var domainAsString = bitArrayToHex(hmacDomain);
+		if (domainAsString in this.data.credentials) {
+			var values = decryptWithGCM(
+				this.keys.cipher,
+				hexToBitArray(this.data.credentials[domainAsString]),
+				hmacDomain
+			);
+			return paddedBitArrayToString(values, MAX_PASSWORD_LENGTH_BYTES);
+		}
+		return null;
+	};
 
-		const textToEncrypt = keeperUtils.concatBitArrays(paddedBits, hmacDomain);
-		const encryptedValue = encryptGCM(cipherState(gcmKey), textToEncrypt);
-		this.data[hmacDomain] = encryptedValue;
-	}
+	set (name, value) {
+		if (this.state === KEYCHAIN_STATE_OFF) throw "Keychain not initialized.";
+		var hmacDomain = HMAC(this.keys.hmacKey, name);
+		var paddedValue = stringToPaddedBitArray(
+			value,
+			MAX_PASSWORD_LENGTH_BYTES
+		);
+		var values = bitArrayToHex(
+			encryptwithGCM(this.keys.cipher, paddedValue, hmacDomain)
+		);
+		this.data.credentials[bitArrayToHex(hmacDomain)] = values;
+	};
 
-	remove(name) {
-		if (this.state == KEYCHAIN_STATE_OFF) throw "Keychain state must be initialized...";
-		const { hmacKey } = this.keys;
-		const hmacDomain = HMAC(hmacKey, name);
-
-		if (hmacDomain in this.data) {
-			const hmacDomainString = hmacDomain.map(x => x.toString()).join();
-			this.data = omit(this.data, [hmacDomainString]);
+	remove (name) {
+		if (this.state === KEYCHAIN_STATE_OFF) throw "Keychain not initialized.";
+		var hmacDomain = bitArrayToHex(HMAC(this.keys.hmacKey, name));
+		if (hmacDomain in this.data.credentials) {
+			this.data.credentials = omit(this.data.credentials, [hmacDomain]);
 			return true;
 		}
 		return false;
-	}
-
-	dump() {
-		if (this.state == KEYCHAIN_STATE_OFF) return null;
-
-		const { authKey } = this.keys;
-		const encryptedMessage = encryptGCM(cipherState(authKey), keeperUtils.stringToBitArray("authenticate"));
-		const currentData = { ...JSON.parse(JSON.stringify(this.data)), salt: this.keys.salt, authMessage: encryptedMessage };
-
-		const hash = SHA256(keeperUtils.stringToBitArray(JSON.stringify(currentData)));
-
-		return [currentData, hash];
-	}
+	};
 
 };
 
-module.exports = {
-	keychain: Keychain
-}
+module.exports.KeyChain = KeyChain;
