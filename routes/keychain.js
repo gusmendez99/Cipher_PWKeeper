@@ -25,7 +25,7 @@ const set = (request, response) => {
 };
 
 const getByName = (request, response) => {
-  const { name }  = request.body;
+  const  name   = request.params.name;
   console.log(name)
   const decrypted = keychain.get(name);
   console.log(decrypted)

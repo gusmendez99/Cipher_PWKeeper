@@ -44,7 +44,7 @@ app.use("/", indexRouter);
 // keychain
 app.post("/keychain/init", keychainRouter.init);
 app.post("/keychain/set", keychainRouter.set);
-app.get("/keychain/get", keychainRouter.getByName);
+app.get("/keychain/get/:name", keychainRouter.getByName);
 app.delete("/keychain/remove/:name", keychainRouter.remove);
 app.get("/keychain/dump", keychainRouter.dump);
 app.post("/keychain/load", keychainRouter.load);
