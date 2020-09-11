@@ -66,20 +66,26 @@ const Home = () => {
                 });
     }
 
-    const viewPass = async(nameOfDomain) => {
+    const viewPass = async(id) => {
 
-        if(nameOfDomain) {
+        console.log("id", id);
+
+        if(id !== undefined) {
 
             axios
-                .get(`http://localhost:3000/keychain/get/${nameOfDomain}/`)
+                .get(`http://localhost:3000/keychain/get/${myDomains[id].domain}`)
                 .then(response => {
-                    console.log("response,", response.data);
+                    console.log("response", response.data);
+                    const newState = [...myDomains];
+                    newState[id] = {domain: myDomains[id].domain, password: response.data.split(" ")[1]}
+                    changeDomains(newState);
                 })
                 .catch(error => {
                     console.log(error);
                     alert("Sorry can't retrieve info");
                 });
                 
+            
         }
 
     }

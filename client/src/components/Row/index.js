@@ -10,8 +10,9 @@ const Row = ({ data, id, deleteRow, viewPass }) => {
     const handleView = () => {
         changeIsVisible(!isVisible);
         if(!isVisible){
-            viewPass(data.domain);
-        }
+            viewPass(id);
+        } 
+
     }
 
     return (
