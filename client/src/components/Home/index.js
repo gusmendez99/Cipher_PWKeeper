@@ -9,27 +9,33 @@ import "ace-builds/src-noconflict/theme-monokai";
 import './styles.css';
 
 
-const Home = ({ domains }) => {
+const Home = () => {
 
     
     const [textEditor, changeTextEditor] = useState(''); //for text editor component
     const [domain, changeDomain] = useState(''); //for form component
     const [pass, changePass] = useState(''); //for form component
-    const [myDomains, changeDomains] = useState(domains);
+    const [myDomains, changeDomains] = useState([]);
     
-    useEffect(() => {
-        changeDomains(domains)
-    },
-    [domains]);
-
     const handleAddDomain = () => {
         if(domain && pass) {
             axios
-                .get("http://localhost:3000/keychain/set")
+                .post("http://localhost:3000/keychain/set", {
+                    name: domain,
+                    value: pass,
+                })
                 .then(response => {
                     console.log("response,", response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("Sorry domain/password don't added");
                 });
-        alert(pass);
+            
+            const newState = [...myDomains, {domain, password:"PASSWORD"}];
+            changeDomains(newState);
+            changeDomain('');
+            changePass('');
         }
         else {
             alert("Fill all fields please!");
@@ -47,8 +53,35 @@ const Home = ({ domains }) => {
     }
 
     const deleteRow = (id) => {
-        const newState = myDomains.filter((e,i) => i != id);
-        changeDomains(newState);
+            axios
+                .delete(`http://localhost:3000/keychain/remove/${myDomains[id].domain}`)
+                .then(response => {
+                    console.log("response,", response.data);
+                    const newState = myDomains.filter((e,i) => i != id);
+                    changeDomains(newState);
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("Sorry password was not deleted correctly");
+                });
+    }
+
+    const viewPass = async(nameOfDomain) => {
+
+        if(nameOfDomain) {
+
+            axios
+                .get(`http://localhost:3000/keychain/get/${nameOfDomain}/`)
+                .then(response => {
+                    console.log("response,", response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("Sorry can't retrieve info");
+                });
+                
+        }
+
     }
 
     return (
@@ -68,10 +101,11 @@ const Home = ({ domains }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {
+                        {   myDomains.length > 0 ?
                             myDomains.map((d,i) => (
-                                <Row key={i} id={i} domain={d} deleteRow={deleteRow}/>
-                            )) 
+                                <Row key={i} id={i} data={d} deleteRow={deleteRow} viewPass={viewPass}/>
+                            )) :
+                            <tr>Please add domains</tr>
                         }
                     </tbody>
                 </table>

@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 
+import { useHistory } from 'react-router-dom';
+
 import './styles.css'
 
 const config = {
@@ -9,6 +11,9 @@ const config = {
 }
 
 const LoginForm = ()=>{
+
+    let history = useHistory();
+
     const [mainPassWord, changePassWord] = useState('');
 
     const handleLogin = () => {
@@ -18,7 +23,9 @@ const LoginForm = ()=>{
                 password:mainPassWord,
             },
         })
-        .then(response => console.log(response))
+        .then(response =>
+            response.status === 200 ? history.push('/home')
+            : console.log(response))
     }
 
     return(

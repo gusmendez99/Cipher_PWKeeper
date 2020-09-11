@@ -17,10 +17,10 @@ const domains = [
 const App = () => {
 
     return (
-       <Router>
+       <Router>7
            <Switch>
-                <Route exact path="/"><Login  /></Route>
-                <Route path="/home" ><Home domains={domains} /></Route>
+                <Route exact path="/"><Login /></Route>
+                <Route path="/home" ><Home/></Route>
            </Switch>
        </Router> 
 
