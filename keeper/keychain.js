@@ -11,7 +11,7 @@ const {
 	stringToPaddedBitArray,
 	bitArrayToHex,
 	hexToBitArray,
-} = require("./utils");
+} = require("./utils.min");
 
 const {
 	KEYCHAIN_STATE_OFF,
@@ -37,7 +37,7 @@ class KeyChain {
 		);
 		this.keys.hmacKey = HMAC(
 			this.keys.masterKey,
-			"MAC KEY STRING"
+			"MAC KEY SECRET"
 		);
 		this.keys.aesKey = HMAC(
 			this.keys.masterKey,
@@ -57,6 +57,7 @@ class KeyChain {
 		console.log('Here i am')
 		if (!(trustedDataCheck == undefined)) {
 			var checkSHA = SHA256(representation);
+			console.log(typeof(representation), typeof(trustedDataCheck))
 			console.log(checkSHA, trustedDataCheck)
 			if (!compareBitArrays(checkSHA, trustedDataCheck)) {
 				throw "Representation and SHA256 hash have different values...";
@@ -66,8 +67,9 @@ class KeyChain {
 		var parsedData = JSON.parse(representation);
 		console.log('parsed', parsedData)
 		var masterKey = PBKDF2(password, parsedData.salt);
-		var hmacKey = HMAC(masterKey, "MAC KEY STRING");
+		var hmacKey = HMAC(masterKey, "MAC KEY SECRET");
 		var hmacPassword = HMAC(hmacKey, "AUTH KEY SECRET");
+		console.log(hmacPassword, parsedData.authKey)
 		if (!compareBitArrays(hmacPassword, parsedData.authKey)) {
 			return false;
 		}
