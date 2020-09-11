@@ -5,7 +5,6 @@ const keychain = new keychainModule.KeyChain();
 
 const init = (request, response) => {
   const password = request.body;
-
   keychain.init(password);
 
   if (keychain.keys === null){
@@ -55,11 +54,11 @@ const dump = (request, response) => {
 
 const load = (request, response) => {
   const { password, representation, trustedDataCheck } = request.body;
-  const newKeychain = new keychainModule.KeyChain();
+  var newKeychain = new keychainModule.KeyChain();
   console.log(password)
   console.log(representation)
   console.log(trustedDataCheck)
-  const loadDone = newKeychain.load(password, representation, trustedDataCheck);
+  var loadDone = newKeychain.load(password, representation, trustedDataCheck);
   console.log(loadDone)
   if (!loadDone){
     response.status(400).json('message: Load failed'); // ver que ondas con este error
