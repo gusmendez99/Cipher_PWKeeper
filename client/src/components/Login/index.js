@@ -5,11 +5,6 @@ import { useHistory } from 'react-router-dom';
 
 import './styles.css'
 
-const config = {
-    method: 'post',
-    url: 'http://localhost:3000/keychain/init'
-}
-
 const LoginForm = ()=>{
 
     let history = useHistory();

@@ -8,16 +8,11 @@ import {
 import Home from '../Home';
 import Login from '../Login';
 
-const domains = [
-    "www.google.com",
-    "www.youtube.com",
-    "www.hotmail.com",
-]
 
 const App = () => {
 
     return (
-       <Router>7
+       <Router>
            <Switch>
                 <Route exact path="/"><Login /></Route>
                 <Route path="/home" ><Home/></Route>

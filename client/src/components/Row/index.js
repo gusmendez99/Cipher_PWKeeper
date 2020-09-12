@@ -1,17 +1,23 @@
 import React, {  useState, useEffect } from 'react';
 
 
-const Row = ({ data, id, deleteRow, viewPass }) => {
+const Row = ({ data, id, deleteRow, viewPass, clearPass}) => {
 
     const [pass, changePass] = useState(data.password);
     const [isVisible, changeIsVisible] = useState(false);
-    const [isLoading, changeLoading] = useState(false);
+
+    useEffect(() => {
+        changePass(data.password);
+    }, [data.password])
 
     const handleView = () => {
-        changeIsVisible(!isVisible);
         if(!isVisible){
             viewPass(id);
-        } 
+        }
+        if(isVisible && pass !== 'PASSWORD'){ 
+            clearPass(id)
+        }
+        changeIsVisible(!isVisible);
 
     }
 
@@ -19,15 +25,12 @@ const Row = ({ data, id, deleteRow, viewPass }) => {
         <tr>
             <td>{data.domain}</td>
             {
-                !isLoading 
-                ? 
                 <>
-                    <td><input type={isVisible ? "text" : "password"} disabled={true} value={data.password} ></input></td>
+                    <td><input type={isVisible ? "text" : "password"} disabled={true} value={pass} ></input></td>
                     <td><button onClick={handleView}>{isVisible ? "Hide" : "View"}</button></td>
                     <td><button onClick={() => deleteRow(id)}>Delete</button></td>
                 </> 
-                :
-                <td>Loading ... </td>
+
             }
         </tr>
     );

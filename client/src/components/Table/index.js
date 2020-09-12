@@ -4,31 +4,27 @@ import Row from '../Row';
 
 import './styles.css';
 
-const Table = () => {
+const Table = ({ myDomains, deleteRow, viewPass, clearPass }) => {
 
     return (
         <div className="container">
-            <table>
-                <caption><h2>My domains</h2></caption>
-                <thead>
-                    <tr>
-                        <th>Domain</th>   
-                        <th>Password</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <table>
+            <caption><h2>My domains</h2></caption>
+            <thead>
                 <tr>
-                    <Row domain="www.gmail.com"/>
-                    {/* TODO: DELETE FROM LOCAL STATE ROW */}
-                    <td><button>Delete</button></td>
+                    <th>Domain</th>   
+                    <th>Password</th>
                 </tr>
-                <tr>
-                    <Row domain="www.youtube.com"/>
-                    {/* TODO: DELETE FROM LOCAL STATE ROW */}
-                    <td><button>Delete</button></td>
-                </tr>
-                </tbody>
-            </table>
+            </thead>
+            <tbody>
+                {   myDomains.length > 0 ?
+                    myDomains.map((d,i) => (
+                        <Row key={i} id={i} data={d} deleteRow={deleteRow} viewPass={viewPass} clearPass={clearPass}/>
+                    )) :
+                    <tr>Please add domains</tr>
+                }
+            </tbody>
+        </table>
         </div>
     );
 }
