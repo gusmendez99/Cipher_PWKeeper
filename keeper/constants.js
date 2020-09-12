@@ -1,6 +1,5 @@
 const KEYCHAIN_STATE_OFF = 0
 const KEYCHAIN_STATE_ON = 1
-
 const MAX_PASSWORD_LENGTH_BYTES = 64;
 
 module.exports = {

@@ -1,6 +1,6 @@
 # PWKeeper
 
-Basic keychain application made with React + Express
+Basic keychain application made with React + Express. 
 
 ### Prerequisites
 ```
