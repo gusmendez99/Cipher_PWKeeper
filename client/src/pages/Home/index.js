@@ -1,16 +1,15 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
 
-import Table from '../Table';
-import Form from '../Form';
+import Table from '../../components/Table';
+import Form from '../../components/Form';
+import Dump from '../../components/Dump';
 
 import './styles.css';
-import Dump from '../Dump';
 
 
 const Home = () => {
-
-    const [text, changeText] = useState(''); //for text editor
+    const [dumpData, changeDumpData] = useState(["", []]); //Dump API uri always return a two-item array
     const [myDomains, changeDomains] = useState([]);
 
     const handleAddDomain = (domain, pass) => {
@@ -38,7 +37,16 @@ const Home = () => {
     }
 
     const handleFetchDump = () => {
-            //changeText() after response and JSON Stringify
+        axios
+            .get(`http://localhost:3000/keychain/dump/`)
+            .then(response => {
+                console.log("response", response.data);
+                changeDumpData(response.data)
+            })
+            .catch(error => {
+                console.log(error);
+                alert("Sorry can't dump info");
+            });
     }
 
     const clearPass = (id) => {
@@ -92,13 +100,9 @@ const Home = () => {
                 <h1>PWKeeper</h1>
             </div>
             <div className="container">
-
                 <Table myDomains={myDomains} deleteRow={deleteRow} viewPass={viewPass} clearPass={clearPass}/>
-
                 <Form handleAddDomain={handleAddDomain} />
-
-                <Dump fetchDump={handleFetchDump} data={text}/>
-
+                <Dump fetchDump={handleFetchDump} representation={dumpData[0]} trustedDataCheck={JSON.stringify(dumpData[1])}/>
             </div>
         </Fragment>
     );
