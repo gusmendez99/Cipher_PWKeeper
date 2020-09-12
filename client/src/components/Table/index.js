@@ -21,7 +21,7 @@ const Table = ({ myDomains, deleteRow, viewPass, clearPass }) => {
                     myDomains.map((d,i) => (
                         <Row key={i} id={i} data={d} deleteRow={deleteRow} viewPass={viewPass} clearPass={clearPass}/>
                     )) :
-                    <tr>Please add domains</tr>
+                    <tr><td>Please add domains</td></tr>
                 }
             </tbody>
         </table>
