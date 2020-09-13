@@ -38,8 +38,11 @@ const Home = () => {
 					alert("Sorry domain/password don't added");
 				});
 
-			const newState = [...myDomains, { domain, password: "PASSWORD" }];
-			changeDomains(newState);
+			const existDomain = myDomains.find((credential, i) => credential.domain === domain);
+			if(!existDomain) {
+				const newState = [...myDomains, { domain, password: "PASSWORD" }];
+				changeDomains(newState);
+			}
 		} else {
 			alert("Fill all fields please!");
 		}

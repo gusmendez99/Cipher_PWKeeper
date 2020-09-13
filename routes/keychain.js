@@ -2,6 +2,8 @@ const moduleKeychain = require("../keeper/keychain");
 const { request, response } = require("express");
 
 let keychain = new moduleKeychain.KeyChain();
+let contents = "";
+let cksum = [];
 
 const init = (request, response) => {
 	const password = request.body;
@@ -51,8 +53,8 @@ const dump = (request, response) => {
 	if (data === null) {
 		response.status(400).json("message: No data to dump"); // ver que ondas con este error
 	} else {
-		dumpData = data
-		console.log(data[0], data[1])
+		//contents = data[0]
+		//cksum = data[1]
 		response.status(200).json(data);
 	}
 };
@@ -61,6 +63,7 @@ const load = (request, response) => {
 	const { password, representation, trustedDataCheck } = request.body;
 	const newKeychain = new moduleKeychain.KeyChain();
 	const loadDone = newKeychain.load(password, representation, trustedDataCheck);
+	//const loadDone = newKeychain.load(password, contents, cksum);	
 	if (!loadDone) {
 		response.status(400).json("message: Load failed");
 	} else {
