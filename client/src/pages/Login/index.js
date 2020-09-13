@@ -1,44 +1,46 @@
-import React, {useState} from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
-import './styles.css'
+import "./styles.css";
 
-const LoginForm = ()=>{
+const LoginForm = () => {
+	let history = useHistory();
 
-    let history = useHistory();
+	const [password, changePassword] = useState("");
 
-    const [mainPassWord, changePassWord] = useState('');
+	const handleLogin = () => {
+		axios
+			.post("http://localhost:3000/keychain/init", {
+				body: {
+					password,
+				},
+			})
+			.then((response) =>
+				response.status === 200
+					? history.push({
+							pathname: "/home",
+							state: { password },
+					  })
+					: console.log(response)
+			);
+	};
 
-    const handleLogin = () => {
-        axios
-        .post("http://localhost:3000/keychain/init", {
-            body: {
-                password:mainPassWord,
-            },
-        })
-        .then(response =>
-            response.status === 200 ? history.push('/home')
-            : console.log(response))
-    }
+	return (
+		<div className="form-wrapper">
+			<div className="title">{"Enter the main password"}</div>
+			<input
+				type="text"
+				placeholder="Password"
+				value={password}
+				onChange={(e) => changePassword(e.target.value)}
+			/>
+			<button className="submit" onClick={handleLogin}>
+				{"Submit"}
+			</button>
+		</div>
+	);
+};
 
-    return(
-        <div className = 'form-wrapper'>
-            <div className = 'title'>
-                {'Insert Main Password'}
-            </div>
-            <input
-                type = 'text'
-                placeholder = 'Password'
-                value = {mainPassWord}
-                onChange = {e => changePassWord(e.target.value)}
-            />
-            <button className = 'submit' onClick = {handleLogin}>
-                {'Submit'}
-            </button>
-        </div>
-    )
-}
-
-export default LoginForm
+export default LoginForm;

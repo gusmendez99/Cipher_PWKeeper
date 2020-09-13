@@ -4,7 +4,7 @@ import Row from '../Row';
 
 import './styles.css';
 
-const Table = ({ myDomains, deleteRow, viewPass, clearPass }) => {
+const Table = ({ myDomains, deleteRow, viewPassword, clearPass }) => {
 
     return (
         <div className="container">
@@ -19,7 +19,7 @@ const Table = ({ myDomains, deleteRow, viewPass, clearPass }) => {
             <tbody>
                 {   myDomains.length > 0 ?
                     myDomains.map((d,i) => (
-                        <Row key={i} id={i} data={d} deleteRow={deleteRow} viewPass={viewPass} clearPass={clearPass}/>
+                        <Row key={i} id={i} data={d} deleteRow={deleteRow} viewPassword={viewPassword} clearPass={clearPass}/>
                     )) :
                     <tr><td>Please add domains</td></tr>
                 }

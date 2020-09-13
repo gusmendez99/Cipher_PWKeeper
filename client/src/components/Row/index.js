@@ -1,7 +1,7 @@
 import React, {  useState, useEffect } from 'react';
 
 
-const Row = ({ data, id, deleteRow, viewPass, clearPass}) => {
+const Row = ({ data, id, deleteRow, viewPassword, clearPass}) => {
 
     const [pass, changePass] = useState(data.password);
     const [isVisible, changeIsVisible] = useState(false);
@@ -12,7 +12,7 @@ const Row = ({ data, id, deleteRow, viewPass, clearPass}) => {
 
     const handleView = () => {
         if(!isVisible){
-            viewPass(id);
+            viewPassword(id);
         }
         if(isVisible && pass !== 'PASSWORD'){ 
             clearPass(id)

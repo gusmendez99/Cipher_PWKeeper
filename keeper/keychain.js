@@ -51,25 +51,20 @@ class KeyChain {
 	load(password, representation, trustedDataCheck) {
 		if (!(trustedDataCheck == undefined)) {
 			const checkSHA = SHA256(representation);
-			//console.log(checkSHA, trustedDataCheck)
 			if (!compareBitArrays(checkSHA, trustedDataCheck)) {
 				throw "Representation and SHA256 hash have different values...";
 			}
 		}
 
 		const parsedData = JSON.parse(representation);
-		//console.log('parsed', parsedData)
 		const masterKey = PBKDF2(password, parsedData.salt);
 		const hmacKey = HMAC(masterKey, "MAC KEY SECRET");
-		const hmacPassword = HMAC(hmacKey, "AUTH KEY SECRET");
-		if (!compareBitArrays(hmacPassword, parsedData.authKey)) {
-			return false;
-		}
-
+		//const authKey = HMAC(hmacKey, "AUTH KEY SECRET");
 		const aesKey = HMAC(masterKey, "AES KEY SECRET").slice(0, 4);
 		const cipher = setupCipher(aesKey);
 
 		this.data = parsedData;
+		console.log(this.data)
 		this.keys = { masterKey, hmacKey, aesKey, cipher };
 		this.state = KEYCHAIN_STATE_ON;
 		return true;
