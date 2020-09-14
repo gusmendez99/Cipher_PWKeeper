@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Button } from "shards-react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "shards-ui/dist/css/shards.min.css"
 
 import { useHistory } from "react-router-dom";
 
@@ -36,9 +39,9 @@ const LoginForm = () => {
 				value={password}
 				onChange={(e) => changePassword(e.target.value)}
 			/>
-			<button className="submit" onClick={handleLogin}>
+			<Button size = "nm" theme ="primary" onClick={handleLogin} className = "submit">
 				{"Submit"}
-			</button>
+			</Button>
 		</div>
 	);
 };
