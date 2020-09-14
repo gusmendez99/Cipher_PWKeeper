@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import AceEditor from "react-ace";
-
+import './styles.css';
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-monokai";
 

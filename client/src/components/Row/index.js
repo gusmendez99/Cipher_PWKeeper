@@ -1,6 +1,6 @@
 import React, {  useState, useEffect } from 'react';
-
-
+import { Button } from "shards-react";
+import './styles.css';
 const Row = ({ data, id, deleteRow, viewPassword, clearPass}) => {
 
     const [pass, changePass] = useState(data.password);
@@ -22,17 +22,20 @@ const Row = ({ data, id, deleteRow, viewPassword, clearPass}) => {
     }
 
     return (
+        <div class="square1">
         <tr>
             <td>{data.domain}</td>
             {
                 <>
                     <td><input type={isVisible ? "text" : "password"} disabled={true} value={pass} ></input></td>
-                    <td><button onClick={handleView}>{isVisible ? "Hide" : "View"}</button></td>
-                    <td><button onClick={() => deleteRow(id)}>Delete</button></td>
+                    <td><button size = "nm" theme ="primary" onClick={handleView}>{isVisible ? "Hide" : "View"}</button></td>
+                   
+                    <td><button size = "nm" theme ="primary" onClick={() => deleteRow(id)}>Delete</button></td>
                 </> 
 
             }
         </tr>
+        </div>
     );
 
 }

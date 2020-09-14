@@ -8,13 +8,19 @@ const Table = ({ myDomains, deleteRow, viewPassword, clearPass }) => {
 
     return (
         <div className="container">
+        <caption><h2>My domains</h2></caption>
         <table>
-            <caption><h2>My domains</h2></caption>
+            
             <thead>
+            <p>
                 <tr>
-                    <th>Domain</th>   
-                    <th>Password</th>
+                    <th>Domain </th>  
+                     <th>-</th>
+                     <th>-</th>
+                     <th>-</th>
+                    <th> Password</th>
                 </tr>
+            </p>
             </thead>
             <tbody>
                 {   myDomains.length > 0 ?

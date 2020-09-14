@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
-
+import { Button } from "shards-react";
 import Table from "../../components/Table";
 import Form from "../../components/Form";
 import Dump from "../../components/Dump";
@@ -133,7 +133,9 @@ const Home = () => {
 	};
 
 	return (
+		
 		<Fragment>
+		<div className="Initial">
 			<div className="header">
 				<h1>PWKeeper</h1>
 			</div>
@@ -164,7 +166,9 @@ const Home = () => {
 					</Fragment>
 				)}
 			</div>
+			</div>
 		</Fragment>
+		
 	);
 };
 

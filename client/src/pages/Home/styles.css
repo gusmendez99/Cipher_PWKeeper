@@ -1,26 +1,38 @@
 .container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     flex-wrap: wrap;
-    flex-direction: row;
+    color: white;
     justify-content: space-around;
-
 }
+.Initial {
+    background-image: url("https://static.vecteezy.com/system/resources/previews/001/211/381/non_2x/global-technology-computer-network-communication-concept-vector.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 
 .header {
     display: flex;
     justify-content: center;
     padding-top: 4rem;
     padding-bottom: 4rem;
+    color:white;
 
 }
 
 .table {
     display: flex;
     flex-direction: column;
+    color:white;
 }
 
 .form {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
+}
+h2{
+    color:white;
 }

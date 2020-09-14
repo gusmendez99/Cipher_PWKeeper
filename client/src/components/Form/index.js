@@ -13,12 +13,17 @@ const Form = ({ handleAddDomain }) => {
         changePass('');
     }
 
+
     return (
+        <div class="square2">
         <div className="container">
             <div>
+                
                 <legend><h2>Add domain</h2></legend>
+            
                 <label>Domain</label><br />
                 <input
+
                     type="text"
                     placeholder="Ej. www.google.com"
                     value={domain}
@@ -33,6 +38,7 @@ const Form = ({ handleAddDomain }) => {
                 /><br />
                 <button onClick={handleAdd}>Add</button>
             </div>
+        </div>
         </div>
     );
 
