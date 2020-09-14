@@ -33,6 +33,6 @@
     flex-direction: column;
     flex-wrap: nowrap;
 }
-h2{
+.white_title{
     color:white;
 }

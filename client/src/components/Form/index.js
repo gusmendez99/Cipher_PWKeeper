@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import {Button} from 'shards-react'
 import './styles.css';
 
 const Form = ({ handleAddDomain }) => {
@@ -19,7 +19,7 @@ const Form = ({ handleAddDomain }) => {
         <div className="container">
             <div>
                 
-                <legend><h2>Add domain</h2></legend>
+                <legend><h2 className = 'color1'>Add domain</h2></legend>
             
                 <label>Domain</label><br />
                 <input
@@ -36,7 +36,7 @@ const Form = ({ handleAddDomain }) => {
                     value={pass}
                     onChange={e => (changePass(e.target.value))}
                 /><br />
-                <button onClick={handleAdd}>Add</button>
+                <Button onClick={handleAdd}>Add</Button>
             </div>
         </div>
         </div>

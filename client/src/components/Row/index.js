@@ -28,9 +28,9 @@ const Row = ({ data, id, deleteRow, viewPassword, clearPass}) => {
             {
                 <>
                     <td><input type={isVisible ? "text" : "password"} disabled={true} value={pass} ></input></td>
-                    <td><button size = "nm" theme ="primary" onClick={handleView}>{isVisible ? "Hide" : "View"}</button></td>
+                    <td><Button size = "nm" theme ="primary" onClick={handleView}>{isVisible ? "Hide" : "View"}</Button></td>
                    
-                    <td><button size = "nm" theme ="primary" onClick={() => deleteRow(id)}>Delete</button></td>
+                    <td><Button size = "nm" theme ="primary" onClick={() => deleteRow(id)}>Delete</Button></td>
                 </> 
 
             }

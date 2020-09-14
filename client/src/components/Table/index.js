@@ -8,7 +8,7 @@ const Table = ({ myDomains, deleteRow, viewPassword, clearPass }) => {
 
     return (
         <div className="container">
-        <caption><h2>My domains</h2></caption>
+        <caption><h2 className = 'caption'>My domains</h2></caption>
         <table>
             
             <thead>

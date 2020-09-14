@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Button } from 'shards-react'
 
 import AceEditor from "react-ace";
 import './styles.css';
@@ -27,8 +28,8 @@ const Dump = ({
 
 	return (
 		<div>
-			<h2>Dump & Load</h2>
-			<h4>Representation (string)</h4>
+			<h2 className = 'white_title'>Dump & Load</h2>
+			<h4 className = 'white_title'>Representation (string)</h4>
 			<AceEditor
 				height="150px"
 				mode="json"
@@ -37,7 +38,7 @@ const Dump = ({
 				onChange={(text) => changeRepresentationText(text)}
 				name="textEditor"
 			/>
-			<h4>Trusted Data Check (array)</h4>
+			<h4 className = 'white_title'>Trusted Data Check (array)</h4>
 			<AceEditor
 				height="150px"
 				mode="json"
@@ -46,8 +47,8 @@ const Dump = ({
 				onChange={(text) => changeTrustedDataCheckText(text)}
 				name="textEditor"
 			/>
-			<button onClick={() => fetchDump()}>Dump database</button>
-			<button
+			<Button onClick={() => fetchDump()}>Dump database</Button>
+			<Button
 				onClick={() =>
 					loadKeychain(
 						mainPassword,
@@ -57,7 +58,7 @@ const Dump = ({
 				}
 			>
 				Load database
-			</button>
+			</Button>
 		</div>
 	);
 };

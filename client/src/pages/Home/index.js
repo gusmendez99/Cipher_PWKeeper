@@ -137,7 +137,7 @@ const Home = () => {
 		<Fragment>
 		<div className="Initial">
 			<div className="header">
-				<h1>PWKeeper</h1>
+				<h1 className= 'white_title'>PWKeeper</h1>
 			</div>
 			<div className="container">
 				{mainPassword !== EMPTY_PASSWORD ? (
