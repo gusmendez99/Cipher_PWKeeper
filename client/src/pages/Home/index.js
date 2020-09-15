@@ -1,12 +1,15 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
-import { Button } from "shards-react";
-import Table from "../../components/Table";
+
+import { Row, Container, Col } from "shards-react";
+
+import Table from "../../components/DomainList";
 import Form from "../../components/Form";
 import Dump from "../../components/Dump";
 
 import "./styles.css";
+import Header from "../../components/Header";
 
 const EMPTY_PASSWORD = "";
 
@@ -38,9 +41,14 @@ const Home = () => {
 					alert("Sorry domain/password don't added");
 				});
 
-			const existDomain = myDomains.find((credential, i) => credential.domain === domain);
-			if(!existDomain) {
-				const newState = [...myDomains, { domain, password: "PASSWORD" }];
+			const existDomain = myDomains.find(
+				(credential, i) => credential.domain === domain
+			);
+			if (!existDomain) {
+				const newState = [
+					...myDomains,
+					{ domain, password: "PASSWORD" },
+				];
 				changeDomains(newState);
 			}
 		} else {
@@ -68,10 +76,13 @@ const Home = () => {
 			trustedDataCheck &&
 			trustedDataCheck.length > 0
 		) {
-
-            const trustedDataCheckAsBitArray = JSON.parse(trustedDataCheck)
-            const data = { password, representation, trustedDataCheck: trustedDataCheckAsBitArray };
-            console.log(data)
+			const trustedDataCheckAsBitArray = JSON.parse(trustedDataCheck);
+			const data = {
+				password,
+				representation,
+				trustedDataCheck: trustedDataCheckAsBitArray,
+			};
+			console.log(data);
 			axios
 				.post(`http://localhost:3000/keychain/load/`, data)
 				.then((response) => {
@@ -133,42 +144,44 @@ const Home = () => {
 	};
 
 	return (
-		
-		<Fragment>
-		<div className="Initial">
-			<div className="header">
-				<h1 className= 'white_title'>PWKeeper</h1>
-			</div>
-			<div className="container">
+		<div className="home-container">
+			<Header />
+			<Container>
 				{mainPassword !== EMPTY_PASSWORD ? (
-					<>
-						<Table
-							myDomains={myDomains}
-							deleteRow={deleteRow}
-							viewPassword={viewPassword}
-							clearPass={clearPass}
-						/>
-						<Form handleAddDomain={handleAddDomain} />
-						<Dump
-							mainPassword={mainPassword}
-							fetchDump={handleFetchDump}
-							loadKeychain={handleLoadKeychain}
-							representation={dumpData[0]}
-							trustedDataCheck={JSON.stringify(dumpData[1])}
-						/>
-					</>
-				) : (
 					<Fragment>
-						<h3>
+						<Row>
+							<Col lg="7">
+								<Table
+									myDomains={myDomains}
+									deleteRow={deleteRow}
+									viewPassword={viewPassword}
+									clearPass={clearPass}
+								/>
+							</Col>
+							<Col  lg="5">
+								<Form  handleAddDomain={handleAddDomain} />
+								<Dump
+									mainPassword={mainPassword}
+									fetchDump={handleFetchDump}
+									loadKeychain={handleLoadKeychain}
+									representation={dumpData[0]}
+									trustedDataCheck={JSON.stringify(
+										dumpData[1]
+									)}
+								/>
+							</Col>
+						</Row>
+					</Fragment>
+				) : (
+					<div>
+						<h3 className="caption">
 							{"Main password does not exist, please go to "}
 							<Link to="/">Home</Link>
 						</h3>
-					</Fragment>
+					</div>
 				)}
-			</div>
-			</div>
-		</Fragment>
-		
+			</Container>
+		</div>
 	);
 };
 

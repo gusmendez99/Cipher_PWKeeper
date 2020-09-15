@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Button } from "shards-react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "shards-ui/dist/css/shards.min.css"
 
+import Header from "../../components/Header";
+import { Button } from "shards-react";
 import { useHistory } from "react-router-dom";
 
 import "./styles.css";
@@ -31,17 +30,25 @@ const LoginForm = () => {
 	};
 
 	return (
-		<div className="form-wrapper">
-			<div className="title">{"Enter the main password"}</div>
-			<input
-				type="text"
-				placeholder="Password"
-				value={password}
-				onChange={(e) => changePassword(e.target.value)}
-			/>
-			<Button size = "nm" theme ="primary" onClick={handleLogin} className = "submit">
-				{"Submit"}
-			</Button>
+		<div className="login-container">
+			<Header />
+			<div className="form-wrapper">
+				<div className="title">{"Enter master password"}</div>
+				<input
+					type="password"
+					placeholder="Password"
+					value={password}
+					onChange={(e) => changePassword(e.target.value)}
+				/>
+				<Button
+					size="nm"
+					theme="primary"
+					onClick={handleLogin}
+					className="submit"
+				>
+					{"Submit"}
+				</Button>
+			</div>
 		</div>
 	);
 };

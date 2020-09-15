@@ -27,9 +27,9 @@ const Dump = ({
 	}, [representation, trustedDataCheck]);
 
 	return (
-		<div>
-			<h2 className = 'white_title'>Dump & Load</h2>
-			<h4 className = 'white_title'>Representation (string)</h4>
+		<div className="container">
+			<h2 className = 'caption'>Dump & Load</h2>
+			<h5 className = 'caption'>Representation (string)</h5>
 			<AceEditor
 				height="150px"
 				mode="json"
@@ -38,7 +38,7 @@ const Dump = ({
 				onChange={(text) => changeRepresentationText(text)}
 				name="textEditor"
 			/>
-			<h4 className = 'white_title'>Trusted Data Check (array)</h4>
+			<h5 className = 'caption'>Trusted Data Check (array)</h5>
 			<AceEditor
 				height="150px"
 				mode="json"
@@ -47,8 +47,10 @@ const Dump = ({
 				onChange={(text) => changeTrustedDataCheckText(text)}
 				name="textEditor"
 			/>
-			<Button onClick={() => fetchDump()}>Dump database</Button>
+			<Button className="button" onClick={() => fetchDump()}>Dump database</Button>
 			<Button
+				className="button"
+				theme="success"
 				onClick={() =>
 					loadKeychain(
 						mainPassword,

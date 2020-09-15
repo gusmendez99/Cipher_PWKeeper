@@ -1,3 +1,8 @@
-.white_title {
+.caption {
 	color: white;
+	margin-top: 10px;
+}
+
+.button {
+	margin-top: 20px;
 }

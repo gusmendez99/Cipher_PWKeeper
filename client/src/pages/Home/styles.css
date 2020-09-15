@@ -4,35 +4,18 @@
     align-items: center;
     flex-wrap: wrap;
     color: white;
-    justify-content: space-around;
-}
-.Initial {
-    background-image: url("https://static.vecteezy.com/system/resources/previews/001/211/381/non_2x/global-technology-computer-network-communication-concept-vector.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-
-.header {
-    display: flex;
     justify-content: center;
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-    color:white;
-
+    margin-top: 25px;
 }
 
-.table {
-    display: flex;
-    flex-direction: column;
-    color:white;
+.separator {
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
+
 
 .form {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-}
-.white_title{
-    color:white;
 }
